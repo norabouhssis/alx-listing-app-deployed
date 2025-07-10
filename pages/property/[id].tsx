@@ -1,54 +1,38 @@
-import { PROPERTYLISTINGSAMPLE } from "@/constants/index";
 import { useRouter } from "next/router";
+import axios from "axios";
+import { useState, useEffect } from "react";
 import PropertyDetail from "@/components/property/PropertyDetail";
-import BookingSection from "@/components/property/BookingSection";
-import ReviewSection from "@/components/property/ReviewSection";
+import { PropertyProps } from "@/interfaces";
 
-export default function PropertyPage() {
+export default function PropertyDetailPage() {
   const router = useRouter();
   const { id } = router.query;
-  const property = PROPERTYLISTINGSAMPLE.find((item) => item.name === id);
+  const [property, setProperty] = useState<PropertyProps | null>(null); // <-- Use PropertyProps
+  const [loading, setLoading] = useState(true);
 
-  if (!property) return <p>Property not found</p>;
+  useEffect(() => {
+    const fetchProperty = async () => {
+      if (!id) return;
+      try {
+        const response = await axios.get(`/api/properties/${id}`);
+        setProperty(response.data as PropertyProps); // <-- Use PropertyProps
+      } catch (error) {
+        console.error("Error fetching property details:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  return (
-    <div className="property-detail-container">
-      <div className="main-content">
-        <PropertyDetail property={property} />
-        <ReviewSection reviews={property.reviews} />
-      </div>
-      <aside className="booking-section">
-        <BookingSection price={property.price} />
-      </aside>
-      <style jsx>{`
-        .property-detail-container {
-          display: flex;
-          flex-direction: row;
-          gap: 2rem;
-          padding: 2rem 1rem;
-          max-width: 1200px;
-          margin: 0 auto;
-        }
-        .main-content {
-          flex: 2;
-          min-width: 0;
-        }
-        .booking-section {
-          flex: 1;
-          min-width: 300px;
-          max-width: 400px;
-        }
-        @media (max-width: 900px) {
-          .property-detail-container {
-            flex-direction: column;
-            gap: 1.5rem;
-          }
-          .booking-section {
-            max-width: 100%;
-            min-width: 0;
-          }
-        }
-      `}</style>
-    </div>
-  );
+    fetchProperty();
+  }, [id]);
+
+  if (loading) {
+    return <p>Loading...</p>;
+  }
+
+  if (!property) {
+    return <p>Property not found</p>;
+  }
+
+  return <PropertyDetail property={property} />;
 }

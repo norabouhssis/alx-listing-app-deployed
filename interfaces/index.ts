@@ -18,3 +18,14 @@ export interface PropertyProps {
   description: string;
   reviews : string[];
 }
+
+export interface ReviewSectionProps {
+  propertyId: string;
+}
+
+export interface Review {
+  id: string;
+  comment: string;
+  // Add other fields if needed
+}
+
