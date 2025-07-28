@@ -1,4 +1,5 @@
 export interface PropertyProps {
+  id: string;
   name: string;
   address: {
     state: string;
@@ -16,16 +17,17 @@ export interface PropertyProps {
   image: string;
   discount: string;
   description: string;
-  reviews : string[];
 }
 
 export interface ReviewSectionProps {
+  reviews: Review[];
   propertyId: string;
 }
 
 export interface Review {
   id: string;
   comment: string;
-  // Add other fields if needed
+  avatar: string;
+  name: string;
+  rating: string;
 }
-

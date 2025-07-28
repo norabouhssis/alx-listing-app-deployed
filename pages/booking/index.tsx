@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useState } from "react";
+import { useState, FormEvent } from "react";
 
 export default function BookingForm() {
   const [formData, setFormData] = useState({
@@ -12,19 +12,23 @@ export default function BookingForm() {
     cvv: "",
     billingAddress: "",
   });
+  console.log({ setFormData });
 
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
 
     try {
-      const response = await axios.post("/api/bookings", formData);
-      alert("Booking confirmed!");
-    } catch (error) {
+      const response = await axios.post<{ message: string }>(
+        "/api/bookings",
+        formData
+      );
+      alert(`Booking confirmed for ${response.data.message}`);
+    } catch {
       setError("Failed to submit booking.");
     } finally {
       setLoading(false);

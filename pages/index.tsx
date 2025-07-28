@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Image from "next/image";
 import { PROPERTYLISTINGSAMPLE, heroBg } from "../constants";
 
 // Pill component
@@ -8,7 +9,7 @@ type PillProps = {
   onClick?: () => void;
 };
 
-const Pill: React.FC<PillProps> = ({ label, active, onClick }) => (
+const Pill = ({ label, active, onClick }: PillProps) => (
   <button
     onClick={onClick}
     style={{
@@ -41,7 +42,7 @@ const FILTERS = [
 ];
 
 // Hero Section
-const HeroSection: React.FC = () => (
+const HeroSection = () => (
   <section
     style={{
       width: "100%",
@@ -78,11 +79,16 @@ const HeroSection: React.FC = () => (
   </section>
 );
 
-// Filter Section
-const FilterSection: React.FC<{
+type FilterSectionProps = {
   activeFilter: string | null;
   setActiveFilter: (filter: string | null) => void;
-}> = ({ activeFilter, setActiveFilter }) => (
+};
+
+// Filter Section
+const FilterSection = ({
+  activeFilter,
+  setActiveFilter,
+}: FilterSectionProps) => (
   <div style={{ margin: "1.5rem 0", display: "flex", flexWrap: "wrap" }}>
     {FILTERS.map((filter) => (
       <Pill
@@ -96,7 +102,7 @@ const FilterSection: React.FC<{
 );
 
 // Listing Section
-const ListingSection: React.FC<{ filter: string | null }> = ({ filter }) => {
+const ListingSection = ({ filter }: { filter: string | null }) => {
   const filtered = filter
     ? PROPERTYLISTINGSAMPLE.filter((p) =>
         p.category.map((c) => c.toLowerCase()).includes(filter.toLowerCase())
@@ -125,12 +131,12 @@ const ListingSection: React.FC<{ filter: string | null }> = ({ filter }) => {
             transition: "box-shadow 0.2s",
           }}
         >
-          <img
+          <Image
             src={property.image}
             alt={property.name}
+            width={300}
+            height={180}
             style={{
-              width: "100%",
-              height: "180px",
               objectFit: "cover",
               borderTopLeftRadius: "1rem",
               borderTopRightRadius: "1rem",
@@ -140,7 +146,13 @@ const ListingSection: React.FC<{ filter: string | null }> = ({ filter }) => {
             <h3 style={{ margin: "0 0 0.5rem 0", fontSize: "1.1rem" }}>
               {property.name}
             </h3>
-            <div style={{ color: "#0070f3", fontWeight: 600, marginBottom: "0.5rem" }}>
+            <div
+              style={{
+                color: "#0070f3",
+                fontWeight: 600,
+                marginBottom: "0.5rem",
+              }}
+            >
               ${property.price}
             </div>
             <div style={{ color: "#888", fontSize: "0.95rem" }}>
@@ -154,17 +166,19 @@ const ListingSection: React.FC<{ filter: string | null }> = ({ filter }) => {
 };
 
 // Main Page
-const HomePage: React.FC = () => {
+const HomePage = () => {
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
 
   return (
     <div style={{ maxWidth: 1200, margin: "0 auto", padding: "2rem" }}>
       <HeroSection />
-      <FilterSection activeFilter={activeFilter} setActiveFilter={setActiveFilter} />
+      <FilterSection
+        activeFilter={activeFilter}
+        setActiveFilter={setActiveFilter}
+      />
       <ListingSection filter={activeFilter} />
     </div>
   );
 };
 
 export default HomePage;
-
